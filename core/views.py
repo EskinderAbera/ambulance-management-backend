@@ -21,6 +21,34 @@ class CreateMessage(mixins.CreateModelMixin, mixins.ListModelMixin, generics.Gen
             return Response({'msg': 'successfully created'}, status=status.HTTP_201_CREATED)
 
 
+class CreateDriver(mixins.CreateModelMixin, mixins.ListModelMixin, generics.GenericAPIView):
+    queryset = Driver.objects.all()
+    serializer_class = DriverSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        res = self.create(request, *args, **kwargs)
+        if res.status_code == 201:
+            return Response({'msg': 'successfully created'}, status=status.HTTP_201_CREATED)
+
+
+class ListDriver(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, generics.GenericAPIView):
+
+    queryset = Driver.objects.all()
+    serializer_class = DriverSerializer
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
 class ActiveHospital(APIView):
 
     def get(self, request, format = None):
@@ -44,6 +72,7 @@ class HospitalMessageView(APIView):
         serializer = MessageSerializer(message, many = True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+
 class LoginView(APIView):
     permission_classes = (permissions.AllowAny, )
 
@@ -65,11 +94,19 @@ class LoginView(APIView):
             res.append({"activedrivers": activedriverserialized.data})
             res.append({"drivers": driverserialized.data})
             return Response(res, status=status.HTTP_200_OK)
-        else:
-            messages = profile.user_message.filter(isactive = True)
-            serializer = MessageSerializer(messages, many = True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
+            
 
-        
+class LoginViewDriver(APIView):
+    permission_classes = (permissions.AllowAny, )
+
+    def post(self, request, format = None):
+        serializer = LoginSerializer(data=request.data, context = {'request': self.request })
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        login(request, user)
+        profile = Profile.objects.get(user = user)
+        messages = profile.user_message.filter(isactive = True)
+        serializer = MessageSerializer(messages, many = True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
