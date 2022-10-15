@@ -1,3 +1,4 @@
+from operator import truediv
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -6,8 +7,8 @@ from django.utils.translation import gettext_lazy as _
 
 class Hospital(models.Model):
     name = models.CharField(max_length = 128, blank = True, null = True)
-    latitude = models.DecimalField(max_digits=100, decimal_places=90, blank = True, null = True)
-    longitude = models.DecimalField(max_digits=100, decimal_places=90, blank = True, null = True)
+    latitude = models.FloatField(blank = True, null = True)
+    longitude = models.FloatField(blank = True, null = True)
     phonenumber = models.CharField(max_length = 13, blank = True, null = True)
 
 
@@ -33,8 +34,8 @@ class Role(models.Model):
 
 class SenderMessage(models.Model):
     hospital = models.ForeignKey(Hospital, on_delete = models.CASCADE)
-    latitude = models.DecimalField(max_digits=100, decimal_places=90, blank = True, null = True)
-    longitude = models.DecimalField(max_digits=100, decimal_places=90, blank = True, null = True)
+    latitude = models.FloatField(blank = True, null = True)
+    longitude = models.FloatField(blank = True, null = True)
     country = models.CharField(max_length = 128, blank = True, null = True)
     street = models.CharField(max_length = 128, blank = True, null = True)
     name = models.CharField(max_length = 128, blank = True, null = True)

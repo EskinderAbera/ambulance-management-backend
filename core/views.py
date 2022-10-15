@@ -29,11 +29,6 @@ class ActiveHospital( mixins.ListModelMixin, generics.GenericAPIView):
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
-    # def put(self, request, *args, **kwargs):
-    #     return self.update(request, *args, **kwargs)
-
-    # def delete(self, request, *args, **kwargs):
-    #     return self.destroy(request, *args, **kwargs)
 
 class HospitalMessageView(APIView):
     def get(self, request, pk, format = None):
