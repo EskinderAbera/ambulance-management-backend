@@ -119,8 +119,9 @@ class AssignMessage(APIView):
         if serializer.is_valid():
             serializer.validated_data['isactive'] = False
             serializer.save()
+            del request.data['id']
             message = SenderMessage.objects.get(id = request.data['sendermessage'])
-            serialized = MessageSerializer(message, data=request.data['sendermessage'])
+            serialized = MessageSerializer(message, data=request.data)
             if serialized.is_valid():
                 serialized.validated_data['isactive'] = False
                 serialized.save()
