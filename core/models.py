@@ -33,7 +33,7 @@ class Role(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete = models.CASCADE)
-    hospital = models.ForeignKey(Hospital, on_delete = models.CASCADE)
+    hospital = models.ForeignKey(Hospital, on_delete = models.CASCADE, related_name = "users_profile")
     role = models.ForeignKey(Role, on_delete = models.CASCADE)
 
     def __str__(self):

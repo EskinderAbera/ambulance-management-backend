@@ -1,4 +1,6 @@
-from rest_framework import generics, mixins, status
+from django.contrib.auth import login
+from django.http import JsonResponse
+from rest_framework import generics, mixins, status, permissions
 from rest_framework.response import Response
 from core.models import *
 from .serializers import *
@@ -42,4 +44,24 @@ class HospitalMessageView(APIView):
 
         serializer = MessageSerializer(message, many = True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class LoginView(APIView):
+    permission_classes = (permissions.AllowAny, )
+
+    def post(self, request, format = None):
+        serializer = LoginSerializer(data=request.data, context = {'request': self.request })
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        login(request, user)
+        profile = Profile.objects.get(user = user)
+        messages = SenderMessage.objects.filter(hospital = profile.hospital)
+        drivers = Driver.objects.filter(hospital = profile.hospital, isactive = True)
+        serializer = MessageSerializer(messages, many = True)
+        serialized = DriverSerializer(drivers, many=True)
+        res = []
+        res.append({"messages": serializer.data})
+        res.append({"drivers": serialized.data})
+        return Response(res, status=status.HTTP_200_OK)
+        
+
 
