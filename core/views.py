@@ -115,6 +115,7 @@ class AssignMessage(APIView):
             driver = Driver.objects.get(id = request.data['id'])
         except Driver.DoesNotExist:
             return Response({"msg" : "driver does not exist!"}, status=status.HTTP_404_NOT_FOUND)
+        request.data['isactive'] = False
         serializer = DriverSerializer(driver, data=request.data)
         if serializer.is_valid():
             serializer.save()
