@@ -111,10 +111,18 @@ class LoginViewDriver(APIView):
 class AssignMessage(APIView):
 
     def post(self, request, format = None):
-        driver = Driver.objects.filter(id = request.data['id']).update(sendermessage = request.data['msg_id'])
-        driver.update(isactive = False)
-        SenderMessage.objects.filter(id = driver.sendermessage).update(isactive = False)
-        return Response({"msg": "Successfully assign message to driver"}, status=status.HTTP_202_ACCEPTED)
+        try: 
+            driver = Driver.objects.get(id = request.data['id'])
+        except Driver.DoesNotExist:
+            return Response({"msg" : "driver does not exist!"}, status=status.HTTP_404_NOT_FOUND)
+        serializer = DriverSerializer(driver, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            # SenderMessage.objects.get(id = request.data['msg_id']).update(isactive = False)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        # SenderMessage.objects.filter(id = driver.sendermessage).update(isactive = False)
+        # return Response({"msg": "Successfully assign message to driver"}, status=status.HTTP_202_ACCEPTED)
         
 
 
