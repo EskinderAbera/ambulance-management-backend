@@ -1,5 +1,4 @@
 from django.contrib.auth import login
-from django.http import JsonResponse
 from rest_framework import generics, mixins, status, permissions
 from rest_framework.response import Response
 from core.models import *
@@ -94,7 +93,7 @@ class LoginView(APIView):
             res.append({"activedrivers": activedriverserialized.data})
             res.append({"drivers": driverserialized.data})
             return Response(res, status=status.HTTP_200_OK)
-            
+
 
 class LoginViewDriver(APIView):
     permission_classes = (permissions.AllowAny, )
@@ -104,9 +103,19 @@ class LoginViewDriver(APIView):
         serializer.is_valid(raise_exception=True)
         user = serializer.validated_data['user']
         login(request, user)
-        profile = Profile.objects.get(user = user)
-        messages = profile.user_message.filter(isactive = True)
-        serializer = MessageSerializer(messages, many = True)
+        driver = Driver.objects.get(user = user)
+        # message = SenderMessage.objects.filter(driver = driver, isactive = True)
+        message = driver.sender_message.filter(isactive = True)
+        serializer = MessageSerializer(message, many = True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class AssignMessage(APIView):
+
+    def post(self, request, format = None):
+        Driver.objects.filter(id = request.data['id']).update(sendermessage = request.data['msg_id'])
+        return Response({"msg": "Successfully assign message to driver"}, status=status.HTTP_202_ACCEPTED)
+        
+
+
 
 

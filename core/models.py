@@ -1,5 +1,3 @@
-from lib2to3.pgen2 import driver
-from operator import truediv
 from django.contrib.auth.models import User
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -16,15 +14,6 @@ class Hospital(models.Model):
     def __str__(self):
         return f"{self.name}"
 
-
-class Driver(models.Model):
-    drivername = models.CharField(max_length = 128, blank = True, null = True)
-    numberplate = models.CharField(max_length = 128, blank = True, null = True)
-    isactive = models.BooleanField(default=True)
-    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, blank=True, null=True, related_name = 'hospital_user')
-
-    def __str__(self):
-        return f"{self.drivername}"
 
 class Role(models.Model):
     rolename = models.CharField(max_length = 128, blank = True, null = True)
@@ -43,6 +32,7 @@ class SenderMessage(models.Model):
     area = models.CharField(max_length = 128, blank = True, null = True)
     message = models.CharField(max_length = 128, blank = True, null = True)
     isactive = models.BooleanField(default = True)
+    phonenumber = models.CharField(max_length = 13, blank = True, null = True)
     
     class Types(models.TextChoices):
         High = "High", "High"
@@ -63,10 +53,20 @@ class Profile(models.Model):
     hospital = models.ForeignKey(Hospital, on_delete = models.CASCADE, related_name = "users_profile")
     role = models.ForeignKey(Role, on_delete = models.CASCADE)
     sendermessage = models.ForeignKey(SenderMessage, on_delete = models.CASCADE, related_name = "user_message", blank = True, null = True)
-    driver = models.ForeignKey(Driver, on_delete = models.CASCADE, related_name = "user_message", blank = True, null = True)
 
     def __str__(self):
         return f"{self.user.username}"
+
+
+class Driver(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank = True, null = True)
+    sendermessage = models.ForeignKey(SenderMessage, on_delete = models.CASCADE, related_name = "sender_message", blank = True, null = True)
+    numberplate = models.CharField(max_length = 128, blank = True, null = True)
+    isactive = models.BooleanField(default=True)
+    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, blank=True, null=True, related_name = 'hospital_user')
+
+    def __str__(self):
+        return f"{self.drivername}"
     
     
 

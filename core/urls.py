@@ -7,5 +7,7 @@ urlpatterns = [
     path('active/', ActiveHospital.as_view()),
     path('message/<str:pk>/', HospitalMessageView.as_view()),
     path('login/', LoginView.as_view()),
+    path('login-driver/', LoginViewDriver.as_view()),
+    path('assign-message/', AssignMessage.as_view()),
     path('list-driver/<str:pk>/', ListDriver.as_view())
 ]
