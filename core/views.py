@@ -54,17 +54,23 @@ class LoginView(APIView):
         user = serializer.validated_data['user']
         login(request, user)
         profile = Profile.objects.get(user = user)
-        messages = SenderMessage.objects.filter(hospital = profile.hospital)
-        activedrivers = Driver.objects.filter(hospital = profile.hospital, isactive = True)
-        drivers = Driver.objects.filter(hospital = profile.hospital)
-        messageserializer = MessageSerializer(messages, many = True)
-        activedriverserialized = DriveSerializer(activedrivers, many=True)
-        driverserialized = DriveSerializer(drivers, many = True)
-        res = []
-        res.append({"messages": messageserializer.data})
-        res.append({"activedrivers": activedriverserialized.data})
-        res.append({"drivers": driverserialized.data})
-        return Response(res, status=status.HTTP_200_OK)
+        if profile.role.rolename == 'hospitaluser':
+            messages = SenderMessage.objects.filter(hospital = profile.hospital, isactive = True)
+            activedrivers = Driver.objects.filter(hospital = profile.hospital, isactive = True)
+            drivers = Driver.objects.filter(hospital = profile.hospital)
+            messageserializer = MessageSerializer(messages, many = True)
+            activedriverserialized = DriveSerializer(activedrivers, many=True)
+            driverserialized = DriveSerializer(drivers, many = True)
+            res = []
+            res.append({"messages": messageserializer.data})
+            res.append({"activedrivers": activedriverserialized.data})
+            res.append({"drivers": driverserialized.data})
+            return Response(res, status=status.HTTP_200_OK)
+        else:
+            messages = profile.user_message.filter(isactive = True)
+            serializer = MessageSerializer(messages, many = True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
         
 
 
