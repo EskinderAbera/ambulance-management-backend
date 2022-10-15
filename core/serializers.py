@@ -22,18 +22,26 @@ class MessageSerializer(serializers.ModelSerializer):
 
 
 class DriverSerializer(serializers.ModelSerializer):
-    hospital = HospitalSerializer()
+    # hospital = HospitalSerializer()
+    hospital = serializers.SerializerMethodField()
 
     class Meta:
         model = Driver
         fields = ['hospital']
+
+    def get_accounts_items(self, obj):
+            customer_account_query = models.Hospital.objects.filter(
+                id=obj.id)
+            serializer = HospitalSerializer(customer_account_query, many=True)
+    
+            return serializer.data
 
 class DriveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Driver
         fields = '__all__'
-        
+
 
 class LoginSerializer(serializers.Serializer):
     """

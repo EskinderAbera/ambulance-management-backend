@@ -21,13 +21,17 @@ class CreateMessage(mixins.CreateModelMixin, mixins.ListModelMixin, generics.Gen
             return Response({'msg': 'successfully created'}, status=status.HTTP_201_CREATED)
 
 
-class ActiveHospital( mixins.ListModelMixin, generics.GenericAPIView):
+class ActiveHospital(APIView):
 
-    queryset = Driver.objects.filter(isactive = True)
-    serializer_class = DriverSerializer
+    def get(self, request, format = None):
+        drivers = Driver.objects.filter(isactive = True)
+        Hospitales = []
+        for driver in drivers:
+            hospital = Hospital.objects.get(id = driver.hospital.id)
+            serializer = HospitalSerializer(hospital)
+            Hospitales.append(serializer.data)
+        return Response(Hospitales, status=status.HTTP_200_OK)
 
-    def get(self, request, *args, **kwargs):
-        return self.list(request, *args, **kwargs)
 
 
 class HospitalMessageView(APIView):
