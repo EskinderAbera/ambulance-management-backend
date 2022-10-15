@@ -60,6 +60,7 @@ class Profile(models.Model):
 
 class Driver(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, blank = True, null = True)
+    role = models.ForeignKey(Role, on_delete = models.CASCADE, blank = True, null = True)
     sendermessage = models.ForeignKey(SenderMessage, on_delete = models.CASCADE, related_name = "sender_message", blank = True, null = True)
     numberplate = models.CharField(max_length = 128, blank = True, null = True)
     isactive = models.BooleanField(default=True)
