@@ -66,7 +66,7 @@ class Driver(models.Model):
     hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE, blank=True, null=True, related_name = 'hospital_user')
 
     def __str__(self):
-        return f"{self.drivername}"
+        return f"{self.user}"
     
     
 
