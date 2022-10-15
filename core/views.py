@@ -119,7 +119,7 @@ class AssignMessage(APIView):
         if serializer.is_valid():
             serializer.validated_data['isactive'] = False
             serializer.save()
-            # SenderMessage.objects.get(id = request.data['msg_id']).update(isactive = False)
+            SenderMessage.objects.get(id = request.data['msg_id']).update(isactive = False)
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         # SenderMessage.objects.filter(id = driver.sendermessage).update(isactive = False)
