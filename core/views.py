@@ -104,15 +104,16 @@ class LoginViewDriver(APIView):
         user = serializer.validated_data['user']
         login(request, user)
         driver = Driver.objects.get(user = user)
-        # message = SenderMessage.objects.filter(driver = driver, isactive = True)
-        message = driver.sender_message.filter(isactive = True)
+        message = SenderMessage.objects.filter(id = driver.sendermessage, isactive = True)
         serializer = MessageSerializer(message, many = True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 class AssignMessage(APIView):
 
     def post(self, request, format = None):
-        Driver.objects.filter(id = request.data['id']).update(sendermessage = request.data['msg_id'])
+        driver = Driver.objects.filter(id = request.data['id']).update(sendermessage = request.data['msg_id'])
+        driver.update(isactive = False)
+        SenderMessage.objects.filter(id = driver.sendermessage).update(isactive = False)
         return Response({"msg": "Successfully assign message to driver"}, status=status.HTTP_202_ACCEPTED)
         
 
