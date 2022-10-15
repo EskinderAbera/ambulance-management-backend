@@ -55,12 +55,15 @@ class LoginView(APIView):
         login(request, user)
         profile = Profile.objects.get(user = user)
         messages = SenderMessage.objects.filter(hospital = profile.hospital)
-        drivers = Driver.objects.filter(hospital = profile.hospital, isactive = True)
-        serializer = MessageSerializer(messages, many = True)
-        serialized = DriverSerializer(drivers, many=True)
+        activedrivers = Driver.objects.filter(hospital = profile.hospital, isactive = True)
+        drivers = Driver.objects.filter(hospital = profile.hospital)
+        messageserializer = MessageSerializer(messages, many = True)
+        activedriverserialized = DriveSerializer(activedrivers, many=True)
+        driverserialized = DriveSerializer(drivers, many = True)
         res = []
-        res.append({"messages": serializer.data})
-        res.append({"drivers": serialized.data})
+        res.append({"messages": messageserializer.data})
+        res.append({"activedrivers": activedriverserialized.data})
+        res.append({"drivers": driverserialized.data})
         return Response(res, status=status.HTTP_200_OK)
         
 

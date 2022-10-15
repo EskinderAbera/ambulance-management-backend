@@ -1,3 +1,4 @@
+from pyexpat import model
 from rest_framework import serializers
 from .models import *
 from django.contrib.auth import authenticate
@@ -27,6 +28,12 @@ class DriverSerializer(serializers.ModelSerializer):
         model = Driver
         fields = ['hospital']
 
+class DriveSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Driver
+        fields = '__all__'
+        
 
 class LoginSerializer(serializers.Serializer):
     """
