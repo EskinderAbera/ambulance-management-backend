@@ -104,7 +104,7 @@ class LoginViewDriver(APIView):
         user = serializer.validated_data['user']
         login(request, user)
         driver = Driver.objects.get(user = user)
-        message = SenderMessage.objects.filter(id = driver.sendermessage, isactive = True)
+        message = SenderMessage.objects.filter(id = driver.sendermessage.id, isactive = True)
         serializer = MessageSerializer(message, many = True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
